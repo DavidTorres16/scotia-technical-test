@@ -1,0 +1,33 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: baas-employee
+  flyway:
+    enabled: true
+    schemas: scotiapay
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:9090/introduction_db"
+    username: "introduction_user"
+    password: "password"
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: scotiapay
+management:
+  context-path: /actuator
+  security:
+    enable: true
+  endpoints:
+    web:
+      exposure:
+        include: 'health'
+logging:
+  level:
+    org.flywaydb: DEBUG

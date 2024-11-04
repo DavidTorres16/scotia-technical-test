@@ -1,0 +1,80 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id "org.openapi.generator" version "5.4.0"
+}
+
+group = 'scotiapay'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.1'
+	implementation 'org.openapitools:openapi-generator:5.4.0'
+
+	// logging
+	implementation 'org.slf4j:slf4j-api:1.7.36'
+	implementation 'ch.qos.logback:logback-classic:1.2.6'
+
+	//database connection
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.postgresql:postgresql:42.5.4'
+
+	//database migration and generated
+	implementation 'org.flywaydb:flyway-core:8.5.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+openApiValidate {
+	inputSpec = "$rootDir/src/main/resources/api.yml".toString()
+	recommend = true
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/api.yml".toString()
+	outputDir = "$buildDir/generated".toString()
+	apiPackage = "com.bank.scotiapay.openapi"
+	modelPackage = "com.bank.scotiapay.openapi.model"
+	configOptions = [
+			dateLibrary    : "java11",
+			interfaceOnly  : "true",
+			implicitHeaders: "true",
+			additionalModelTypeAnnotations: "@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor",
+			useBigDecimalForDouble: "true"
+
+	]
+
+	compileJava.dependsOn 'openApiGenerate', 'processResources'
+	sourceSets.main.java.srcDirs 'build/generated/src/main/java'
+	sourceSets.main.java.srcDirs 'src/main/java'
+
+}

@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  title: baas employee
+  description: |-
+    Microservice for employee management
+  version: 1.0.0
+  x-template-version: 3.0.0
+  contact:
+    name: David Torres Garcia
+    email: dmtg16@hotmail.com
+  x-implemented-by:
+    - Colombia
+  license:
+    name: Employee
+servers:
+  - url: /api/v1
+paths:
+  /employee:
+    get:
+      tags:
+        - 'employee'
+      summary: Employee Detail
+      description: Employee Detail
+      operationId: Get Employee
+      parameters:
+        - $ref: '#/components/parameters/TraceId'
+        - name: id
+          in: query
+          required: true
+          description: Employee number identification
+          schema:
+            type: string
+            format: uuid
+          example: a81bc81b-dead-4e5d-abff-90865d1e13b1
+      responses:
+        '200':
+          description: get employee detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+              examples:
+                ResourceResponseExample:
+                  $ref: '#/components/examples/SendResponseEmployeeExample'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+  /employees:
+    get:
+      tags:
+        - 'employee'
+      summary: List Employee
+      description: List Employee
+      operationId: List Employee
+      parameters:
+        - $ref: '#/components/parameters/TraceId'
+        - name: page
+          in: query
+          required: true
+          description: page
+          schema:
+            type: integer
+            format: int32
+          example: 2
+        - name: number_employees
+          in: query
+          required: true
+          description: Number of employees per page
+          schema:
+            type: integer
+            format: int32
+          example: 10
+      responses:
+        '200':
+          description: get list employees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeesResponse'
+              examples:
+                ResourceResponseExample:
+                  $ref: '#/components/examples/SendResponseEmployeeExample'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+components:
+  schemas:
+    EmployeesResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - employee
+      properties:
+        employee:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeList'
+    EmployeeResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - employee
+      properties:
+        employee:
+          $ref: '#/components/schemas/Employee'
+    EmployeeList:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - last_name
+        - position_title
+        - status
+        - date_arrival
+      properties:
+        name:
+          type: string
+          description: first name
+          minLength: 1
+          example: 'David'
+        last_name:
+          type: string
+          minLength: 1
+          description: last name
+          example: 'Torres'
+        position_title:
+          type: string
+          description: position title
+          minLength: 1
+          maxLength: 200
+          example: 'Backend software engineer associate'
+        status:
+          type: string
+          description: employee status
+          example: 'ACTIVE'
+        date_arrival:
+          type: string
+          description: address
+          minLength: 1
+          maxLength: 700
+          example: '17 st # 7-37 Armenia Quindio'
+    Employee:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - middle_name
+        - last_name
+        - date_birth
+        - address
+        - telephone
+      properties:
+        name:
+          type: string
+          description: first name
+          minLength: 1
+          example: 'David'
+        middle_name:
+          type: string
+          description: middle name
+          minLength: 1
+          example: 'Mauricio'
+        last_name:
+          type: string
+          minLength: 1
+          description: last name
+          example: 'Torres'
+        date_birth:
+          type: string
+          format: date
+          description: date birth
+          example: '16/01/2004'
+        location_city:
+          type: string
+          description: Location City
+          example: 'Armenia'
+        address:
+          type: string
+          description: address
+          minLength: 1
+          maxLength: 700
+          example: '17 st # 7-37 Armenia Quindio'
+        telephone:
+          type: string
+          description: telephone
+          minLength: 1
+          maxLength: 17
+          example: '+573117181339'
+        position:
+          $ref: '#/components/schemas/Position'
+    Position:
+      type: object
+      additionalProperties: false
+      required:
+        - position_title
+        - hire_date
+        - email
+        - salary
+        - time_position
+      properties:
+        position_title:
+          type: string
+          description: position title
+          minLength: 1
+          maxLength: 200
+          example: 'Backend software engineer associate'
+        hire_date:
+          type: string
+          format: date
+          description: hire date
+          example: '12/11/2024'
+        email:
+          type: string
+          description: email
+          example: 'dmtg16@hotmail.com'
+        salary:
+          type: number
+          description: salary amount
+          example: '6500000'
+        time_position:
+          type: integer
+          format: int32
+          description:  time position in months
+          example: 1
+    EmptyDataResponse:
+      required:
+        - message
+        - code
+      type: object
+      properties:
+        message:
+          type: string
+          description: Description error
+          example: 'error 400'
+        code:
+          type: string
+          description: code error
+          example: '400'
+
+  parameters:
+    TraceId:
+      name: x-b3-traceid
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Correlation ID
+      example: 421777de3d81
+
+  examples:
+    EmptyDataResponseExample:
+      value:
+        message: "error 400"
+        code: '400'
+    SendResponseEmployeeExample:
+      value:
+        employee:
+          name: David
+          middle_name: Mauricio
+          last_name: Torres
+          location_city: Armenia
+          date_birth: '16/01/2004'
+          address: '17 st # 7-37 Armenia Quindio'
+          telephone: '+573117181339'
+          position:
+            position_title: Backend software engineer associate
+            hire_date: '12/11/2024'
+            email: dmtg16@hotmail.com
+            salary: 6500000
+            time_position: 1

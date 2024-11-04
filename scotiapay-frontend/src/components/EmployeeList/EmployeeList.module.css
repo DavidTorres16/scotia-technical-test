@@ -1,0 +1,25 @@
+.employeeItem {
+    max-width: 30em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+    background-color: var(--third-color);
+    margin-bottom: 0.2em;
+    border-radius: 4px;
+    gap: 1em;
+}
+
+.employeeTitle {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.viewDetailsButton {
+    padding: 1em 2em;
+    color: var(--secondary-color);
+}
+
+.viewDetailsButton:hover {
+    background-color: var(--third-color);
+}

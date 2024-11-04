@@ -1,5 +1,5 @@
 import React from 'react';
-import { Employee } from '../../types';
+import { Employee } from '../../types/employeeInterfaces';
 import styles from './EmployeeList.module.css';
 
 interface EmployeeListProps {
@@ -12,8 +12,9 @@ const EmployeeList: React.FC<EmployeeListProps> = ({ employees, onViewDetails })
     <ul>
       {employees.map((employee) => (
         <li key={employee.id} className={styles.employeeItem}>
-          <div className={styles.employeeTitle}>
-            <p>{employee.firstName} {employee.lastName} - {employee.positionTitle}</p>
+          <div>
+            <p className={styles.employeeName}>{employee.firstName} {employee.lastName} </p> 
+            <p className={styles.employeePosition}> {employee.position.title}</p>
           </div>
           <button className={styles.viewDetailsButton} onClick={() => onViewDetails(employee)}>
             View Details

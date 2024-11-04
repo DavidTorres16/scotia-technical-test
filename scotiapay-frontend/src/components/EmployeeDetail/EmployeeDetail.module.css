@@ -1,8 +1,8 @@
 .detailContainer {
-    padding: 0 1.5em 0 1.5em;
+    padding: 1.5em;
     border-radius: 4px;
     max-width: 52em;
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -10,24 +10,41 @@
 
 .employeeDataContainer{
     display: flex;
-    justify-content: space-between;
     flex-direction: row;
     gap: 1.5em;
 }
 
 .sectionTitle {
     font-size: 1.4em;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: var(--title-color);
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.mainTitle{
+    font-size: 1.8em;
+    margin-bottom: 1em;
 }
 
 .closeButton {
-    margin-top: 1em;
     background-color: var(--warning-color);
     color: white;
 }
 
 .closeButton:hover {
     background-color: #c82333;  
+}
+
+.buttonsContainer{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.updateForm{
+    margin-top: 1em;
+}
+
+.employeeDataContainer>div>p{
+    margin-top: 0.6em;
+    font-size: 0.9em;
 }

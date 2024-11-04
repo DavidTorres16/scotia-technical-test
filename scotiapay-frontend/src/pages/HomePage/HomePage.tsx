@@ -5,7 +5,7 @@ import EmployeeList from '../../components/EmployeeList/EmployeeList';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/index';
 import { setEmployees, selectEmployee } from '../../slices/EmployeeSlice';
-import { Employee } from '../../types';
+import { Employee } from '../../types/employeeInterfaces';
 import EmployeeDetail from '../../components/EmployeeDetail/EmployeeDetail';
 import {
   getEmployees,
@@ -42,7 +42,7 @@ const HomePage: React.FC = () => {
     <div>
       <Header onInsertClick={handleInsertClick} />
       <div className={styles.mainContainer}>
-        <div>
+        <div className={styles.employeeListContainer}>
           <EmployeeList employees={employees} onViewDetails={handleViewDetails} />
         </div>
         <div className={styles.employeeActionsContainer}>
@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
             />
           )}
           {selectedEmployee && !isInsertFormVisible && (
-            <EmployeeDetail employee={selectedEmployee} onClose={() => dispatch(selectEmployee(null))} />
+            <EmployeeDetail employee={selectedEmployee} onClose={() => dispatch(selectEmployee(null))} fetchEmployeeList={fetchEmployeesList} />
           )}
         </div>
       </div>

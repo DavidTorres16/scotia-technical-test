@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
-    --primary-color: #2A2438;
-    --secondary-color: #5C5470;
-    --third-color: #352F44;
-    --title-color: #DBD8E3;
+    --primary-color: #352F44;
+    --secondary-color: #2A2438;
+    --third-color: #5C5470;
+    --fourth-color: #DBD8E3;
+    --text-color: #F0F0F0;
     --warning-color: #dc3545;
-    --font-family: Arial, sans-serif;
+    --font-family: "Raleway", sans-serif;
 }
 
 body {
@@ -17,8 +20,8 @@ body {
     padding: 0;
 }
 
-h1, h2, h3, p{
-    color: var(--title-color);
+h1, h2, h3, p, label{
+    color: var(--text-color);
     overflow:unset;
 }
 
@@ -27,6 +30,7 @@ button{
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    color: var(--primary-color);
 }
 
 input{
@@ -44,6 +48,27 @@ select{
 }
 
 button:hover{
-    transition: ease-in 0.2s;
+    transition: ease-in-out 0.2s;
     backdrop-filter: brightness(120%);
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    h1, h2, h3, label {
+        font-size: 1.1em;
+    }
+}
+
+/* Input adjustments */
+/* input, select {
+    padding: 8px 12px;
+    font-size: 1em;
+    width: 100%;
+} */
+
+@media (max-width: 480px) {
+    input, select, button {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
 }

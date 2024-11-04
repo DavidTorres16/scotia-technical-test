@@ -1,19 +1,61 @@
 .overlay {
-    position: 'fixed' as 'fixed';
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: 'rgba(0; 0; 0; 0.5)';
-    display: 'flex';
-    justify-content: 'center';
-    align-items: 'center';
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal {
-    background-color: '#fff';
-    padding: '2rem';
-    border-radius: '8px';
-    max-width: '500px';
-    width: '100%';
+    padding: 1.5em;
+    border-radius: 4px;
+    width: 100%;
+    background-color: var(--secondary-color);
+}
+
+.modalUpdate{
+    border-radius: 4px;
+    width: 100%;
+    background-color: var(--secondary-color);
+}
+
+.employeeForm{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.formSection{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.titles{
+    margin-bottom: 1em;
+}
+
+.buttons {
+    background-color: var(--fourth-color);
+}
+
+.buttons:hover {
+    background-color: var(--text-color);
+}
+
+.inputLabelSection{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.5em; 
+    font-size: 0.9em;
+}
+
+@media (max-width: 1024px) {
+    .employeeItem {
+        align-content: center;
+    }
+
+    .inputLabelSection{
+        max-width: 15em;
+    }
 }

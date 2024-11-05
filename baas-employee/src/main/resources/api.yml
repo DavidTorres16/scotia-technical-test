@@ -122,6 +122,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmptyDataResponse'
+  /employee/{id}:
+    put:
+      tags:
+        - 'employee'
+      summary: Update Employee
+      description: Update an existing employee's details
+      operationId: updateEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the employee
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
   /employee:
     get:
       tags:
@@ -149,6 +195,37 @@ paths:
               examples:
                 ResourceResponseExample:
                   $ref: '#/components/examples/SendResponseEmployeeExample'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+    post:
+      tags:
+        - 'employee'
+      summary: Create Employee
+      description: Create a new employee
+      operationId: createEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
         '400':
           description: Client error request
           content:
@@ -322,6 +399,7 @@ components:
         - date_birth
         - address
         - telephone
+        - status
       properties:
         id:
           type: string
@@ -357,6 +435,10 @@ components:
           minLength: 1
           maxLength: 700
           example: '17 st # 7-37 Armenia Quindio'
+        status:
+          type: string
+          description: employee status
+          example: 'ACTIVE'
         telephone:
           type: string
           description: telephone
@@ -374,7 +456,12 @@ components:
         - email
         - salary
         - time_position
+        - id
       properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the position
         position_title:
           type: string
           description: position title

@@ -1,78 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import { EmployeeUpdate } from '../../types/employeeInterfaces';
+import { EmployeeDetail, EmployeeUpdate } from '../../types/employeeInterfaces';
+import { location } from '../../types/locationInterfaces';
 import styles from './EmployeeForm.module.css';
 import { createEmployee, updateEmployee } from '../../services/EmployeeService';
+import { getCities, getCountries, getRegions } from '../../services/LocationService';
+import { convertEmployeeUpdateToDetail } from '../../utils/mapper';
 
 interface EmployeeFormProps {
-  employee?: EmployeeUpdate;
+  employee?: EmployeeDetail;
   onClose: () => void;
   onEmployeeSaved: () => void;
 }
 
-// Define a type for the form data
-type FormData = {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  title: string;
-  dateArrival: string;
-  status: string;
-  locationCity: string;
-  address: string;
-  dateBirth: string;
-  telephone: string;
-  hireDate: string;
-  email: string;
-  salary: number;
-};
-
 const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmployeeSaved }) => {
-  const [formData, setFormData] = useState<FormData>({
-    firstName: employee?.firstName || '',
-    middleName: employee?.middleName || '',
-    lastName: employee?.lastName || '',
-    title: employee?.position?.title || '',
-    dateArrival: employee?.dateArrival || '',
+  const [countriesData, setCountriesData] = useState<location[]>([]);
+  const [regionsData, setRegionsData] = useState<location[]>([]);
+  const [citiesData, setCitiesData] = useState<location[]>([]);
+  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+  const [selectedRegionId, setSelectedRegionId] = useState<string>('');
+
+  const [formData, setFormData] = useState<EmployeeUpdate>({
+    id: employee?.id,
+    name: employee?.name || '',
+    middle_name: employee?.middle_name || '',
+    last_name: employee?.last_name || '',
+    title: employee?.position?.position_title || '',
+    date_arrival: employee?.date_arrival || '',
     status: employee?.status || '',
-    locationCity: employee?.locationCity || '',
+    location_city: employee?.location_city || '',
     address: employee?.address || '',
-    dateBirth: employee?.dateBirth || '',
+    date_birth: employee?.date_birth || '',
     telephone: employee?.telephone || '',
-    hireDate: employee?.position?.hireDate || '',
+    hire_date: employee?.position?.hire_date || '',
     email: employee?.position?.email || '',
     salary: employee?.position?.salary || 0,
+    position_id: employee?.position?.id || '',
+    time_position: employee?.position?.time_position || 0,
   });
 
   useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await getCountries();
+        setCountriesData(response.data); // Adjust based on your API response structure
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+    
+    fetchCountries();
+
     if (employee) {
       setFormData({
-        firstName: employee.firstName,
-        middleName: employee.middleName || '',
-        lastName: employee.lastName,
-        title: employee.position.title,
-        dateArrival: employee.dateArrival,
+        ...formData,
+        name: employee.name,
+        middle_name: employee.middle_name || '',
+        last_name: employee.last_name,
+        title: employee.position.position_title,
+        date_arrival: employee.date_arrival,
         status: employee.status,
-        locationCity: employee.locationCity || '',
-        address: employee.address || '',
-        dateBirth: employee.dateBirth || '',
+        location_city: employee.location_city || '',
+        address: employee.address,
+        date_birth: employee.date_birth,
         telephone: employee.telephone || '',
-        hireDate: employee.position.hireDate || '',
+        hire_date: employee.position.hire_date || '',
         email: employee.position.email || '',
         salary: employee.position.salary || 0,
+        position_id: employee?.position?.id || '',
+        time_position: employee?.position?.time_position || 0,
       });
     }
   }, [employee]);
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      if (selectedCountryId) {
+        try {
+          const response = await getRegions(selectedCountryId);
+          setRegionsData(response.data); // Adjust based on your API response structure
+        } catch (error) {
+          console.error('Error fetching regions:', error);
+        }
+      } else {
+        setRegionsData([]);
+        setCitiesData([]);
+        setSelectedRegionId('');
+      }
+    };
+
+    fetchRegions();
+  }, [selectedCountryId]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (selectedRegionId) {
+        try {
+          const response = await getCities(selectedCountryId, selectedRegionId);
+          setCitiesData(response.data); // Adjust based on your API response structure
+        } catch (error) {
+          console.error('Error fetching cities:', error);
+        }
+      } else {
+        setCitiesData([]);
+      }
+    };
+
+    fetchCities();
+  }, [selectedRegionId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors: Record<string, string> = {};
     const telephoneRegex = /^\+?[1-9]\d{1,14}$/;
-    const addressRegex = /^[\w\s.,'-]{5,}$/;
-    const textRegext = /^[^<>{}[\]()'"`\\;:]*$/;
+    const addressRegex = /^[\w\s.,'#-]{5,}$/;
+    const textRegex = /^[^<>{}[\]()'"`\\;:]*$/;
 
-    for (const field of ['firstName', 'middleName', 'lastName', 'positionTitle'] as (keyof FormData)[]) {
+    if (formData.date_birth) {
+      const birthDate = new Date(formData.date_birth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const isUnderage = today < new Date(birthDate.setFullYear(today.getFullYear()));
+  
+      if (age < 18 || (age === 18 && isUnderage)) {
+        alert("The user must be at least 18 years old.");
+        return;
+      }
+    }
+
+    for (const field of ['name', 'middle_name', 'last_name', 'title'] as (keyof EmployeeUpdate)[]) {
       const value = formData[field];
-      if (typeof value === 'string' && !textRegext.test(value)) {
+      if (typeof value === 'string' && !textRegex.test(value)) {
         errors[field] = `Please enter a valid ${field} without special characters.`;
       }
     }
@@ -94,9 +151,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
 
     try {
       if (employee) {
-        await updateEmployee(employee.id!, formData);
+        await updateEmployee(formData.id!, { ...convertEmployeeUpdateToDetail(formData), location_city: formData.location_city }); // Save only the selected city ID
+        alert("User updated")
       } else {
-        await createEmployee(formData);
+        await createEmployee({ ...convertEmployeeUpdateToDetail(formData), location_city: formData.location_city }); // Save only the selected city ID
+        alert("User created")
       }
       onEmployeeSaved();
       onClose();
@@ -110,14 +169,13 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
       <div className={employee ? styles.modalUpdate : styles.modal}>
         <h2 className={styles.titles}>{employee ? 'Update Employee' : 'Insert Employee'}</h2>
         <form onSubmit={handleSubmit} className={styles.employeeForm}>
-          {/* Form fields with input binding to formData */}
           <div className={styles.formSection}>
             <div className={styles.inputLabelSection}>
               <label>First Name</label>
               <input
                 type="text"
-                value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
             </div>
@@ -125,16 +183,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Middle Name</label>
               <input
                 type="text"
-                value={formData.middleName}
-                onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                value={formData.middle_name}
+                onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
               />
             </div>
             <div className={styles.inputLabelSection}>
               <label>Last Name</label>
               <input
                 type="text"
-                value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                 required
               />
             </div>
@@ -153,8 +211,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Date of Arrival</label>
               <input
                 type="date"
-                value={formData.dateArrival}
-                onChange={(e) => setFormData({ ...formData, dateArrival: e.target.value })}
+                value={formData.date_arrival}
+                onChange={(e) => setFormData({ ...formData, date_arrival: e.target.value })}
                 required
               />
             </div>
@@ -162,21 +220,61 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Status</label>
               <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} required>
                 <option value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="ACTIVE">Active</option>
+                <option value="BLOCKED">blocked</option>
               </select>
             </div>
           </div>
           <div className={styles.formSection}>
             <div className={styles.inputLabelSection}>
-              <label>Location City</label>
-              <input
-                type="text"
-                value={formData.locationCity}
-                onChange={(e) => setFormData({ ...formData, locationCity: e.target.value })}
+              <label>Location Country</label>
+              <select
+                value={selectedCountryId}
+                onChange={(e) => {
+                  setSelectedCountryId(e.target.value);
+                  setRegionsData([]); // Clear regions and cities when country changes
+                  setCitiesData([]);
+                  setSelectedRegionId('');
+                }}
                 required
-              />
+              >
+                <option value="">Select Country</option>
+                {countriesData.map(country => (
+                  <option key={country.id} value={country.id}>{country.name}</option>
+                ))}
+              </select>
             </div>
+            <div className={styles.inputLabelSection}>
+              <label>Location Region</label>
+              <select
+                value={selectedRegionId}
+                onChange={(e) => {
+                  setSelectedRegionId(e.target.value);
+                  setCitiesData([]); // Clear cities when region changes
+                }}
+                required
+              >
+                <option value="">Select Region</option>
+                {regionsData.map(region => (
+                  <option key={region.id} value={region.id}>{region.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.inputLabelSection}>
+              <label>Location City</label>
+              <select
+                value={formData.location_city}
+                onChange={(e) => setFormData({ ...formData, location_city: e.target.value })}
+                required
+              >
+                <option value="">Select City</option>
+                {citiesData.map(city => (
+                  <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className={styles.formSection}>
             <div className={styles.inputLabelSection}>
               <label>Address</label>
               <input
@@ -189,8 +287,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Date of Birth</label>
               <input
                 type="date"
-                value={formData.dateBirth}
-                onChange={(e) => setFormData({ ...formData, dateBirth: e.target.value })}
+                value={formData.date_birth}
+                onChange={(e) => setFormData({ ...formData, date_birth: e.target.value })}
               />
             </div>
           </div>
@@ -207,8 +305,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Hire Date</label>
               <input
                 type="date"
-                value={formData.hireDate}
-                onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
+                value={formData.hire_date}
+                onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
               />
             </div>
             <div className={styles.inputLabelSection}>

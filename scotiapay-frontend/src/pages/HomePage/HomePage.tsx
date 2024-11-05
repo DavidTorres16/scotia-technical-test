@@ -6,7 +6,7 @@ import { RootState } from '../../store/index';
 import { setEmployees, selectEmployee } from '../../slices/EmployeeSlice';
 import { Employee } from '../../types/employeeInterfaces';
 import EmployeeDetail from '../../components/EmployeeDetail/EmployeeDetail';
-import { getEmployees } from '../../services/EmployeeService';
+import { getEmployeeById, getEmployees } from '../../services/EmployeeService';
 
 import styles from './HomePage.module.css';
 
@@ -24,7 +24,7 @@ const HomePage: React.FC<HomePageProps> = ({ onInsertFormVisible, onCloseInsertF
     const fetchEmployeesList = async () => {
       try {
         const response = await getEmployees();
-        dispatch(setEmployees(response.data));
+        dispatch(setEmployees(response.data.employee));
       } catch (error) {
         console.error('Error fetching employees:', error);
       }
@@ -34,16 +34,19 @@ const HomePage: React.FC<HomePageProps> = ({ onInsertFormVisible, onCloseInsertF
 
   const fetchEmployeesList = async () => {
     const response = await getEmployees();
-    dispatch(setEmployees(response.data));
+    dispatch(setEmployees(response.data.employee));
   };
 
-  const handleViewDetails = (employee: Employee) => {
-    dispatch(selectEmployee(employee));
+  const handleViewDetails = async (employeeId: number) => {
+    const response = await getEmployeeById(employeeId);
+    dispatch(selectEmployee(response.data.employee));
   };
 
   return (
     <div className={styles.mainContainer}>
-      <h1>Employee Management</h1>
+      <div className={styles.title}>
+        <h1>Employee Management</h1>
+      </div>
       <div className={styles.listAndTitleContainer}>
         <div className={styles.employeeListContainer}>
           <EmployeeList employees={employees} onViewDetails={handleViewDetails} />

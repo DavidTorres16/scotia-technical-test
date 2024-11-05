@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Employee } from '../../types/employeeInterfaces';
+import { EmployeeDetail as EmployeeDetailType } from '../../types/employeeInterfaces';
 import styles from './EmployeeDetail.module.css';
 import InsertEmployeeForm from '../../components/InsertEmployeeForm/EmployeeForm';
 
 
 interface EmployeeDetailProps {
-  employee: Employee;
+  employee: EmployeeDetailType;
   onClose: () => void;
   fetchEmployeeList: () => void;
 }
@@ -32,21 +32,21 @@ const EmployeeDetail: React.FC<EmployeeDetailProps> = ({ employee, onClose, fetc
       <div className={styles.employeeDataContainer}>
         <div>
           <h3 className={styles.sectionTitle}>Employee Information</h3>
-          <p>First Name: {employee.firstName}</p>
-          <p>Middle Name: {employee.middleName}</p>
-          <p>Last Name: {employee.lastName}</p>
-          <p>City: {employee.locationCity}</p>
+          <p>First Name: {employee.name}</p>
+          <p>Middle Name: {employee.middle_name}</p>
+          <p>Last Name: {employee.last_name}</p>
+          <p>City: {employee.location_city}</p>
           <p>Address: {employee.address}</p>
-          <p>Date of Birth: {employee.dateBirth}</p>
+          <p>Date of Birth: {employee.date_birth}</p>
           <p>Telephone: {employee.telephone}</p>
         </div>
         <div>
           <h3 className={styles.sectionTitle}>Position Information</h3>
-          <p>Position Title: {employee.position.title}</p>
-          <p>Hire Date: {employee.position.hireDate}</p>
+          <p>Position Title: {employee.position.position_title}</p>
+          <p>Hire Date: {employee.position.hire_date}</p>
           <p>Email: {employee.position.email}</p>
           <p>Salary: ${employee.position.salary}</p>
-          <p>Time in Position: {employee.position.timeInPosition}</p>
+          <p>Time in Position: {employee.position.time_position}</p>
         </div>
       </div>
       <div className={styles.updateForm}>

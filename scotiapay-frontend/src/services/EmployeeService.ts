@@ -7,13 +7,13 @@ export const createEmployee = (employeeData: any) => {
 };
 
 export const getEmployees = () => {
-  return api.get(`${API_BASE_URL}s`);
+  return api.get(`${API_BASE_URL}s?page=0&number_employees=200`);
 };
 
 export const getEmployeeById = (employeeId: number) => {
-  return api.get(`${API_BASE_URL}/${employeeId}`);
+  return api.get(`${API_BASE_URL}?id=${employeeId}`);
 };
 
-export const updateEmployee = (employeeId: number, updatedData: any) => {
+export const updateEmployee = (employeeId: string, updatedData: any) => {
   return api.put(`${API_BASE_URL}/${employeeId}`, updatedData);
 };

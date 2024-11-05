@@ -6,12 +6,15 @@ import com.bank.scotiapay.openapi.model.EmployeeResponse;
 import com.bank.scotiapay.openapi.model.Position;
 import org.springframework.stereotype.Component;
 import scotiapay.baas_employee.entities.EmployeeEntity;
+import scotiapay.baas_employee.entities.PositionEntity;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class EmployeeMapper {
@@ -36,6 +39,7 @@ public class EmployeeMapper {
             position.setSalary(employeeEntity.getPosition().getSalary());
             Integer months = calculateMonthsSince(employeeEntity.getPosition().getTimeInPosition());
             position.setTimePosition(months);
+            position.setId(employeeEntity.getPosition().getId());
             employee.setPosition(position);
         }
         response.setEmployee(employee);
@@ -46,6 +50,10 @@ public class EmployeeMapper {
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(startDate, currentDate);
         return (int) period.toTotalMonths();
+    }
+
+    private LocalDate calculateDateFromMonths(Integer months) {
+        return LocalDate.now().minusMonths(months != null ? months : 0);
     }
 
     public List<EmployeeList> mapToEmployeeList(List<EmployeeEntity> employeeEntities) {
@@ -64,5 +72,60 @@ public class EmployeeMapper {
         return employeeLists;
     }
 
+    public EmployeeEntity mapToEmployeeEntity(EmployeeResponse employeeResponse) {
+        Employee employee = employeeResponse.getEmployee();
+        EmployeeEntity employeeEntity = new EmployeeEntity();
+
+        employeeEntity.setId(employee.getId());
+        employeeEntity.setFirstName(employee.getName());
+        employeeEntity.setMiddleName(employee.getMiddleName());
+        employeeEntity.setLastName(employee.getLastName());
+        employeeEntity.setDateOfBirth(employee.getDateBirth().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate());
+
+        if (employee.getLocationCity() != null) {
+            employeeEntity.setLocationCity(UUID.fromString(employee.getLocationCity()));
+        }
+
+        employeeEntity.setAddress(employee.getAddress());
+        employeeEntity.setTelephone(employee.getTelephone());
+
+        if (employee.getPosition() != null) {
+            Position position = employee.getPosition();
+            PositionEntity positionEntity = new PositionEntity();
+
+            positionEntity.setTitle(position.getPositionTitle());
+            positionEntity.setHireDate(position.getHireDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate());
+            positionEntity.setEmail(position.getEmail());
+            positionEntity.setSalary(position.getSalary());
+            positionEntity.setTimeInPosition(calculateDateFromMonths(position.getTimePosition()));
+
+            employeeEntity.setPosition(positionEntity);
+        }
+
+        return employeeEntity;
+    }
+
+    public PositionEntity toPositionEntity(Position position) {
+        if (position == null) {
+            return null;
+        }
+
+        PositionEntity entity = new PositionEntity();
+        entity.setId(UUID.randomUUID());
+        entity.setTitle(position.getPositionTitle());
+        entity.setHireDate(position.getHireDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        entity.setEmail(position.getEmail());
+        entity.setSalary(position.getSalary());
+
+        if (position.getTimePosition() != null) {
+            entity.setTimeInPosition(LocalDate.now().minusMonths(position.getTimePosition()));
+        }
+
+        return entity;
+    }
 
 }

@@ -2,28 +2,47 @@ import { Position } from "./positionInterfaces";
 
 export interface Employee {
     id: number;
-    firstName: string;
+    name: string;
     middleName: string;
-    lastName: string;
-    dateArrival: string;
+    last_name: string;
+    date_arrival: string;
     status: string;
     locationCity: string;
     address: string;
     dateBirth: string;
     telephone: string;
-    position: Position
+    position_title: string
 }  
 
 export interface EmployeeUpdate {
-    id?: number;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    dateArrival: string;
+    id?: string;
+    name: string;
+    middle_name: string;
+    last_name: string;
+    title: string;
+    date_arrival: string;
     status: string;
-    locationCity: string;
+    location_city: string;
     address: string;
-    dateBirth: string;
+    date_birth: string;
+    telephone: string;
+    hire_date: string;
+    email: string;
+    salary: number;
+    position_id: string;
+    time_position: number;
+}
+
+export interface EmployeeDetail{
+    id?: string;
+    name: string;
+    middle_name: string;
+    last_name: string;
+    date_arrival: string;
+    status: string;
+    location_city: string;
+    address: string;
+    date_birth: string;
     telephone: string;
     position: Position
 }

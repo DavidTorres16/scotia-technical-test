@@ -1,8 +1,8 @@
 export interface Position {
     id: string;
-    title: string;
-    hireDate: string;
+    position_title: string;
+    hire_date: string;
     email: string;
     salary: number;
-    timeInPosition: string;
+    time_position: number;
 }

@@ -27,8 +27,8 @@ public class EmployeeEntity {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "location_city", nullable = false, length = 100)
-    private String locationCity;
+    @Column(name = "location_city", nullable = false)
+    private UUID locationCity;
 
     @Column(name = "address", nullable = false, length = 200)
     private String address;

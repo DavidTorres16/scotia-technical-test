@@ -9,87 +9,94 @@ interface EmployeeFormProps {
   onEmployeeSaved: () => void;
 }
 
+// Define a type for the form data
+type FormData = {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  title: string;
+  dateArrival: string;
+  status: string;
+  locationCity: string;
+  address: string;
+  dateBirth: string;
+  telephone: string;
+  hireDate: string;
+  email: string;
+  salary: number;
+};
+
 const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmployeeSaved }) => {
-  const [firstName, setFirstName] = useState(employee?.firstName || '');
-  const [middleName, setMiddleName] = useState(employee?.middleName || '');
-  const [lastName, setLastName] = useState(employee?.lastName || '');
-  const [positionTitle, setPositionTitle] = useState(employee?.position?.title || '');
-  const [dateArrival, setDateArrival] = useState(employee?.dateArrival || '');
-  const [status, setStatus] = useState(employee?.status || '');
-  const [locationCity, setLocationCity] = useState(employee?.locationCity || '');
-  const [address, setAddress] = useState(employee?.address || '');
-  const [dateBirth, setDateBirth] = useState(employee?.dateBirth || '');
-  const [telephone, setTelephone] = useState(employee?.telephone || '');
-  const [hireDate, setHireDate] = useState(employee?.position?.hireDate || '');
-  const [email, setEmail] = useState(employee?.position?.email || '');
-  const [salary, setSalary] = useState(employee?.position?.salary || 0);
+  const [formData, setFormData] = useState<FormData>({
+    firstName: employee?.firstName || '',
+    middleName: employee?.middleName || '',
+    lastName: employee?.lastName || '',
+    title: employee?.position?.title || '',
+    dateArrival: employee?.dateArrival || '',
+    status: employee?.status || '',
+    locationCity: employee?.locationCity || '',
+    address: employee?.address || '',
+    dateBirth: employee?.dateBirth || '',
+    telephone: employee?.telephone || '',
+    hireDate: employee?.position?.hireDate || '',
+    email: employee?.position?.email || '',
+    salary: employee?.position?.salary || 0,
+  });
 
   useEffect(() => {
     if (employee) {
-      setFirstName(employee.firstName);
-      setMiddleName(employee.middleName || '');
-      setLastName(employee.lastName);
-      setPositionTitle(employee.position.title);
-      setDateArrival(employee.dateArrival);
-      setStatus(employee.status);
-      setLocationCity(employee.locationCity || '');
-      setAddress(employee.address || '');
-      setDateBirth(employee.dateBirth || '');
-      setTelephone(employee.telephone || '');
-      setHireDate(employee.position.hireDate || '');
-      setEmail(employee.position.email || '');
-      setSalary(employee.position.salary || 0);
+      setFormData({
+        firstName: employee.firstName,
+        middleName: employee.middleName || '',
+        lastName: employee.lastName,
+        title: employee.position.title,
+        dateArrival: employee.dateArrival,
+        status: employee.status,
+        locationCity: employee.locationCity || '',
+        address: employee.address || '',
+        dateBirth: employee.dateBirth || '',
+        telephone: employee.telephone || '',
+        hireDate: employee.position.hireDate || '',
+        email: employee.position.email || '',
+        salary: employee.position.salary || 0,
+      });
     }
   }, [employee]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errors: Record<string, string> = {};
     const telephoneRegex = /^\+?[1-9]\d{1,14}$/;
     const addressRegex = /^[\w\s.,'-]{5,}$/;
+    const textRegext = /^[^<>{}[\]()'"`\\;:]*$/;
 
-    if (!telephoneRegex.test(telephone)) {
+    for (const field of ['firstName', 'middleName', 'lastName', 'positionTitle'] as (keyof FormData)[]) {
+      const value = formData[field];
+      if (typeof value === 'string' && !textRegext.test(value)) {
+        errors[field] = `Please enter a valid ${field} without special characters.`;
+      }
+    }
+
+    if (!telephoneRegex.test(formData.telephone)) {
       alert("Please enter a valid international phone number.");
       return;
     }
 
-    if (!addressRegex.test(address)) {
+    if (!addressRegex.test(formData.address)) {
       alert("Please enter a valid address.");
+      return;
+    }
+
+    if (isNaN(formData.salary) || formData.salary <= 1360000) {
+      alert('Salary must be greater than 1,360,000$ COP');
       return;
     }
 
     try {
       if (employee) {
-        await updateEmployee(employee.id!, {
-          firstName,
-          middleName,
-          lastName,
-          positionTitle,
-          dateArrival,
-          status,
-          locationCity,
-          address,
-          dateBirth,
-          telephone,
-          hireDate,
-          email,
-          salary,
-        });
+        await updateEmployee(employee.id!, formData);
       } else {
-        await createEmployee({
-          firstName,
-          middleName,
-          lastName,
-          positionTitle,
-          dateArrival,
-          status,
-          locationCity,
-          address,
-          dateBirth,
-          telephone,
-          hireDate,
-          email,
-          salary,
-        });
+        await createEmployee(formData);
       }
       onEmployeeSaved();
       onClose();
@@ -103,13 +110,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
       <div className={employee ? styles.modalUpdate : styles.modal}>
         <h2 className={styles.titles}>{employee ? 'Update Employee' : 'Insert Employee'}</h2>
         <form onSubmit={handleSubmit} className={styles.employeeForm}>
+          {/* Form fields with input binding to formData */}
           <div className={styles.formSection}>
             <div className={styles.inputLabelSection}>
               <label>First Name</label>
               <input
                 type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 required
               />
             </div>
@@ -117,16 +125,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Middle Name</label>
               <input
                 type="text"
-                value={middleName}
-                onChange={(e) => setMiddleName(e.target.value)}
+                value={formData.middleName}
+                onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
               />
             </div>
             <div className={styles.inputLabelSection}>
               <label>Last Name</label>
               <input
                 type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 required
               />
             </div>
@@ -136,8 +144,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Position Title</label>
               <input
                 type="text"
-                value={positionTitle}
-                onChange={(e) => setPositionTitle(e.target.value)}
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
               />
             </div>
@@ -145,14 +153,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Date of Arrival</label>
               <input
                 type="date"
-                value={dateArrival}
-                onChange={(e) => setDateArrival(e.target.value)}
+                value={formData.dateArrival}
+                onChange={(e) => setFormData({ ...formData, dateArrival: e.target.value })}
                 required
               />
             </div>
             <div className={styles.inputLabelSection}>
               <label>Status</label>
-              <select value={status} onChange={(e) => setStatus(e.target.value)} required>
+              <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} required>
                 <option value="">Select Status</option>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -164,8 +172,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Location City</label>
               <input
                 type="text"
-                value={locationCity}
-                onChange={(e) => setLocationCity(e.target.value)}
+                value={formData.locationCity}
+                onChange={(e) => setFormData({ ...formData, locationCity: e.target.value })}
                 required
               />
             </div>
@@ -173,16 +181,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Address</label>
               <input
                 type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               />
             </div>
             <div className={styles.inputLabelSection}>
               <label>Date of Birth</label>
               <input
                 type="date"
-                value={dateBirth}
-                onChange={(e) => setDateBirth(e.target.value)}
+                value={formData.dateBirth}
+                onChange={(e) => setFormData({ ...formData, dateBirth: e.target.value })}
               />
             </div>
           </div>
@@ -191,24 +199,24 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Telephone</label>
               <input
                 type="tel"
-                value={telephone}
-                onChange={(e) => setTelephone(e.target.value)}
+                value={formData.telephone}
+                onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
               />
             </div>
             <div className={styles.inputLabelSection}>
               <label>Hire Date</label>
               <input
                 type="date"
-                value={hireDate}
-                onChange={(e) => setHireDate(e.target.value)}
+                value={formData.hireDate}
+                onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
               />
             </div>
-            <div  className={styles.inputLabelSection}>
+            <div className={styles.inputLabelSection}>
               <label>Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
@@ -218,13 +226,13 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onEmploy
               <label>Salary</label>
               <input
                 type="number"
-                value={salary}
-                onChange={(e) => setSalary(parseFloat(e.target.value))}
+                value={formData.salary}
+                onChange={(e) => setFormData({ ...formData, salary: parseFloat(e.target.value) })}
                 required
               />
             </div>
           </div>
-          <button className={styles.buttons} type="submit">{employee ? 'Update' : 'Insert'}</button>
+          <button type="submit">{employee ? 'Update' : 'Insert'}</button>
           <button className={styles.buttons} type="button" onClick={onClose}>
             Cancel
           </button>

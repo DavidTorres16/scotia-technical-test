@@ -15,6 +15,8 @@ const EmployeeList: React.FC<EmployeeListProps> = ({ employees, onViewDetails })
           <div>
             <p className={styles.employeeName}>{employee.firstName} {employee.lastName} </p> 
             <p className={styles.employeePosition}> {employee.position.title}</p>
+            <p className={styles.employeeStatus}>{employee.status}</p>
+            <p className={styles.employeeStatus}>hired: {employee.position.hireDate}</p>
           </div>
           <button className={styles.viewDetailsButton} onClick={() => onViewDetails(employee)}>
             View Details

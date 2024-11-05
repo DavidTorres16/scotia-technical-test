@@ -1,21 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-    --primary-color: #352F44;
+    /* --primary-color: #352F44;
     --secondary-color: #2A2438;
     --third-color: #5C5470;
     --fourth-color: #DBD8E3;
     --text-color: #F0F0F0;
-    --warning-color: #dc3545;
+    --warning-color: #dc3545; */
+    --primary-color: #F4F4F4;
+    --secondary-color: #D0D0D0;
+    --third-color: #5C5470;
+    --fourth-color: #777777;
+    --text-color: #333333;
+    --scotia-color: #D81E05;
+    --scotia-color-hover: #BF1B04;
     --font-family: "Raleway", sans-serif;
+    --white-color: #ffffff;
 }
 
 body {
-    font-family: var(--font-family);
     background-color: var(--primary-color);
 }
 
 *{
+    font-family: var(--font-family);
     margin: 0;
     padding: 0;
 }
@@ -31,6 +39,11 @@ button{
     border-radius: 4px;
     cursor: pointer;
     color: var(--primary-color);
+    background-color: var(--fourth-color);
+}
+
+button:hover {
+    background-color: var(--text-color);
 }
 
 input{
@@ -38,6 +51,7 @@ input{
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    border: 1px solid var(--secondary-color);
 }
 
 select{

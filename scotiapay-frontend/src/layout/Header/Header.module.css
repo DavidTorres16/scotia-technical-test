@@ -2,15 +2,46 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    background-color: var(--secondary-color);
-    border-bottom: 1px solid;
-    border-color: var(--third-color);
+    padding: 1.3rem 2rem 1.3rem 0rem;
+    background-color: var(--white-color);
+    border: 1px solid var(--secondary-color)
 }
 
-.button {
-    padding: 0.5rem 1rem;
+.insertButton {
+    padding: 1rem 1rem;
     font-size: 1rem;
     cursor: pointer;
+    background-color: var(--scotia-color);
+    color: var(--primary-color);
 }
 
+.insertButton:hover{
+    background-color: var(--scotia-color-hover);
+}
+
+.header>div>h1{
+    color: var(--scotia-color);
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logoIcon {
+    width: 6em;
+    height: auto;
+}
+
+.navbar{
+    padding: 0.5rem 2rem;
+    gap: 2em;
+    display: flex;
+    flex-direction: row;
+}
+
+.navLink{
+    font-size: 0.8em;
+    color: var(--text-color);
+    text-decoration: none;
+}

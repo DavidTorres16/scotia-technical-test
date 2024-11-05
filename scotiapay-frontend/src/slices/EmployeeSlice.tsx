@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Employee } from '../types/employeeInterfaces';
 
-// Initial state for the slice
 interface EmployeeState {
   employees: Employee[];
   selectedEmployee: Employee | null;
@@ -73,7 +72,6 @@ const initialState: EmployeeState = {
   selectedEmployee: null,
 };
 
-// Slice para manejar el estado de empleados
 const employeeSlice = createSlice({
   name: 'employee',
   initialState,

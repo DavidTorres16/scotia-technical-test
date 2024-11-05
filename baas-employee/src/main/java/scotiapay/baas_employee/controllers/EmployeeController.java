@@ -39,6 +39,7 @@ public class EmployeeController implements EmployeeApi, EmployeesApi {
 
     @Override
     public ResponseEntity<EmployeesResponse> listEmployee(Integer page, Integer numberEmployees) {
-        return EmployeesApi.super.listEmployee(page, numberEmployees);
+        log.info(String.format("Entry controller EmployeeController in method listEmployee"));
+        return ResponseEntity.ok(employeeService.findEmployees(page, numberEmployees ));
     }
 }

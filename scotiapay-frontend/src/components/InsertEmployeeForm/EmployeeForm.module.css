@@ -8,13 +8,13 @@
     padding: 1.5em;
     border-radius: 4px;
     width: 100%;
-    background-color: var(--secondary-color);
+    background-color: var(--white-color);
 }
 
 .modalUpdate{
     border-radius: 4px;
     width: 100%;
-    background-color: var(--secondary-color);
+    background-color: var(--white-color);
 }
 
 .employeeForm{
@@ -35,11 +35,11 @@
 }
 
 .buttons {
-    background-color: var(--fourth-color);
+    background-color: var(--scotia-color);
 }
 
 .buttons:hover {
-    background-color: var(--text-color);
+    background-color: var(--scotia-color-hover);
 }
 
 .inputLabelSection{
@@ -57,5 +57,13 @@
 
     .inputLabelSection{
         max-width: 15em;
+    }
+}
+
+@media (max-width: 480px) {
+    .formSection {
+        align-content: center;
+        flex-wrap: wrap;
+        max-width: 100%;
     }
 }

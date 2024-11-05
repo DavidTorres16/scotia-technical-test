@@ -2,7 +2,7 @@
     padding: 1.5em;
     border-radius: 4px;
     max-width: 52em;
-    background-color: var(--secondary-color);
+    background-color: var(--white-color);
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -26,18 +26,18 @@
 }
 
 .closeButton {
-    background-color: var(--warning-color);
-    color: white;
+    background-color: var(--scotia-color);
 }
 
 .closeButton:hover {
-    background-color: #c82333;  
+    background-color: var(--scotia-color-hover);  
 }
 
 .buttonsContainer{
     display: flex;
     align-items: center;
     gap: 1em;
+    color: var(--primary-color);
 }
 
 .updateForm{

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import scotiapay.baas_employee.entities.EmployeeEntity;
 import scotiapay.baas_employee.repository.EmployeeRepository;
 import scotiapay.baas_employee.services.mapper.EmployeeMapper;
+import scotiapay.baas_employee.services.mapper.MapperUtils;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -37,10 +38,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeesResponse findEmployees(int page, int cantEmployees) {
         log.info(String.format("Entry services EmployeeServiceImpl in method findEmployees for client id: $"));
         Pageable pageable = PageRequest.of(page, cantEmployees);
-        List<EmployeeEntity> employeeEntities= (List<EmployeeEntity>) employeeRepository.findAll(pageable);
+        List<EmployeeEntity> employeeEntities= employeeRepository.findAll(pageable).getContent();
         if(employeeEntities.isEmpty()){
             throw new NoResultException("The employees you are trying to query does not exist");
         }
-        return null;
+        return EmployeesResponse
+                .builder()
+                .employee(employeeMapper.mapToEmployeeList(employeeEntities))
+                .build();
     }
 }

@@ -23,7 +23,7 @@ const EmployeeDetail: React.FC<EmployeeDetailProps> = ({ employee, onClose, fetc
             <button className={styles.closeButton} onClick={onClose}>Close</button>
           </div>
           <div>
-            <button onClick={() => setUpdateFormVisible(true)} className={styles.button}>
+            <button onClick={() => setUpdateFormVisible(true)}>
               Update Employee
             </button>
           </div>

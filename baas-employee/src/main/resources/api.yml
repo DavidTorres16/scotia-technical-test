@@ -15,6 +15,113 @@ info:
 servers:
   - url: /api/v1
 paths:
+  /countries:
+    get:
+      summary: Get all countries
+      description: Retrieve a list of all available countries.
+      operationId: getAllCountries
+      tags:
+        - Country
+      responses:
+        '200':
+          description: List of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Country'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+  /countries/{countryId}/regions:
+    get:
+      summary: Get regions by country ID
+      description: Retrieve a list of regions associated with a specified country ID.
+      operationId: getRegionsByCountryId
+      tags:
+        - Region
+      parameters:
+        - name: countryId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique identifier for the country
+      responses:
+        '200':
+          description: List of regions for the specified country
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Region'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+  /countries/{countryId}/regions/{regionId}/cities:
+    get:
+      summary: Get cities by region and country ID
+      description: Retrieve a list of cities within a specified region and country.
+      operationId: getCitiesByRegionAndCountryId
+      tags:
+        - City
+      parameters:
+        - name: countryId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique identifier for the country
+        - name: regionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique identifier for the region
+      responses:
+        '200':
+          description: List of cities for the specified region and country
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
+        '400':
+          description: Client error request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
   /employee:
     get:
       tags:
@@ -103,6 +210,48 @@ paths:
                 $ref: '#/components/schemas/EmptyDataResponse'
 components:
   schemas:
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the country
+        name:
+          type: string
+          description: Name of the country
+      required:
+        - id
+        - name
+
+    Region:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the region
+        name:
+          type: string
+          description: Name of the region
+      required:
+        - id
+        - name
+
+    City:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the city
+        name:
+          type: string
+          description: Name of the city
+      required:
+        - id
+        - name
+
     EmployeesResponse:
       type: object
       additionalProperties: false
@@ -125,12 +274,17 @@ components:
       type: object
       additionalProperties: false
       required:
+        - id
         - name
         - last_name
         - position_title
         - status
         - date_arrival
       properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the employee
         name:
           type: string
           description: first name
@@ -161,6 +315,7 @@ components:
       type: object
       additionalProperties: false
       required:
+        - id
         - name
         - middle_name
         - last_name
@@ -168,6 +323,10 @@ components:
         - address
         - telephone
       properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the employee
         name:
           type: string
           description: first name

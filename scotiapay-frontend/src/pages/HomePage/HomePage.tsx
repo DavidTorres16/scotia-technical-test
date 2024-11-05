@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../layout/Header/Header';
 import InsertEmployeeForm from '../../components/InsertEmployeeForm/EmployeeForm';
 import EmployeeList from '../../components/EmployeeList/EmployeeList';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,27 +6,31 @@ import { RootState } from '../../store/index';
 import { setEmployees, selectEmployee } from '../../slices/EmployeeSlice';
 import { Employee } from '../../types/employeeInterfaces';
 import EmployeeDetail from '../../components/EmployeeDetail/EmployeeDetail';
-import {
-  getEmployees,
-} from '../../services/EmployeeService';
+import { getEmployees } from '../../services/EmployeeService';
 
-import styles from './HomePage.module.css'
+import styles from './HomePage.module.css';
 
-const HomePage: React.FC = () => {
-  const [isInsertFormVisible, setInsertFormVisible] = useState(false);
+interface HomePageProps {
+  onInsertFormVisible: boolean;
+  onCloseInsertForm: () => void;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ onInsertFormVisible, onCloseInsertForm }) => {
   const dispatch = useDispatch();
   const employees = useSelector((state: RootState) => state.employee.employees);
   const selectedEmployee = useSelector((state: RootState) => state.employee.selectedEmployee);
 
-  // Load employees when the component mounts
   useEffect(() => {
-    // fetchEmployeesList();
-  }, []);
-
-
-  const handleInsertClick = () => {
-    setInsertFormVisible(true);
-  };
+    const fetchEmployeesList = async () => {
+      try {
+        const response = await getEmployees();
+        dispatch(setEmployees(response.data));
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+    fetchEmployeesList();
+  }, [dispatch]);
 
   const fetchEmployeesList = async () => {
     const response = await getEmployees();
@@ -39,21 +42,21 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <Header onInsertClick={handleInsertClick} />
-      <div className={styles.mainContainer}>
+    <div className={styles.mainContainer}>
+      <h1>Employee Management</h1>
+      <div className={styles.listAndTitleContainer}>
         <div className={styles.employeeListContainer}>
           <EmployeeList employees={employees} onViewDetails={handleViewDetails} />
         </div>
         <div className={styles.employeeActionsContainer}>
-          {isInsertFormVisible && (
+          {onInsertFormVisible && (
             <InsertEmployeeForm
               employee={undefined}
-              onClose={() => setInsertFormVisible(false)}
+              onClose={onCloseInsertForm}
               onEmployeeSaved={fetchEmployeesList}
             />
           )}
-          {selectedEmployee && !isInsertFormVisible && (
+          {selectedEmployee && !onInsertFormVisible && (
             <EmployeeDetail employee={selectedEmployee} onClose={() => dispatch(selectEmployee(null))} fetchEmployeeList={fetchEmployeesList} />
           )}
         </div>

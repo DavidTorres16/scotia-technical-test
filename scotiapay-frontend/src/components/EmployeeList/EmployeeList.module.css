@@ -4,16 +4,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 1em;
-    background-color: var(--secondary-color);
-    margin-bottom: 0.2em;
+    background-color: var(--white-color);
+    margin-bottom: 0.4em;
     border-radius: 4px;
     gap: 1.5em;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 4px 8px var(--secondary-color);
+    transition: ease 0.2s;
+}
+
+.employeeItem:hover{
+    box-shadow: 0 1px 2px var(--secondary-color);
 }
 
 .employeeName{
     font-weight: bold;
     font-size: 1.2em;
     overflow: unset;
+}
+
+.employeeStatus{
+    font-size: 0.6em;
 }
 
 .employeePosition{
@@ -35,3 +46,12 @@
         max-width: 100%;
     }
 }
+
+@media (max-width: 480px) {
+    .employeeItem {
+        align-content: center;
+        max-width: 100%;
+    }
+}
+
+

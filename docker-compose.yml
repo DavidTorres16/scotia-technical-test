@@ -1,0 +1,16 @@
+volumes:
+  java_introduction:
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    volumes:
+      - java_introduction:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: introduction_user
+      POSTGRES_DB: introduction_db
+    ports:
+      - "9090:5432"
